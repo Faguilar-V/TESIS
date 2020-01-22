@@ -37,14 +37,14 @@ import glob
 import pandas as pd
 from sunpy.net.helioviewer import HelioviewerClient
 import sunpy
-sunpy.config.set('downloads', 'c:\\Users\\ventas\\Downloads\\ENES\\pruebas')
-#from astropy.units import Quantity
-#from sunpy.map import Map
+from astropy.units import Quantity
+from sunpy.map import Map
+from matplotlib.image import imread
+import matplotlib.pyplot as plt
+from PIL import Image
 
-if __name__ == '__main__':
+def get_images(path):
     #constantes
-    path = 'c:\\Users\\ventas\\Downloads\\ENES\\pruebas\\data\\sun_Data\\database-rev5\\database\\2017\\'
-    sf_arr = []
     for file in glob.glob('%s/*.dat' % (path)):
         df_solarflayers = pd.read_csv(file, sep='\t', header=None)#, usecols=[0, 1, 2], names=['STARTT', 'MAXFlux', 'ENDT'])#, index=None)
         for index, event in df_solarflayers.iterrows():   
@@ -52,9 +52,22 @@ if __name__ == '__main__':
                 year, month, day, hour, minute, second = event[c][:4], event[c][5:7], event[c][8:10], event[c][11:13], event[c][14:16], event[c][17:19]
                 print('La imagen con fecha %s se esta descargando ...' % (year + '/' + month + '/' + day + ':' + hour + ':' + minute + ':' + second + '\n'))
                 hv = HelioviewerClient() 
-                data_sources = hv.get_data_sources()
+                
+#                data_sources = hv.get_data_sources()
                 filepath = hv.download_jp2('%s/%s/%s %s:%s:%s' % (year, month, day, hour, minute, second), observatory='SDO', instrument='HMI', measurement='magnetogram')
-    #hmi = Map(filepath)  
+
+if __name__ == '__main__':
+    #sunpy.config.set('downloads', 'c:\\Users\\ventas\\Downloads\\ENES\\pruebas')
+    path = 'c:\\Users\\ventas\\Downloads\\ENES\\pruebas\\data\\sun_Data\\database-rev5\\database\\2017\\'
+    get = get_images(path)
+    
+    
+    #Ejemplo obtencion de región activa  
+    #hv = HelioviewerClient() 
+    #data_sources = hv.get_data_sources() 
+    #filepath = hv.download_jp2('2012/07/05 00:30:00', observatory='SDO', instrument='HMI', measurement='magnetogram')
+    #hmi = Map(filepath)
     #xrange = Quantity([200, 550], 'arcsec')  
-    #yrange = Quantity([-400, 200], 'arcsec')  
-    #hmi.submap(xrange, yrange).peek()  
+    #yrange = Quantity([400, 200], 'arcsec')  
+    #hmi.submap(xrange, yrange).peek()
+   
